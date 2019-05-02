@@ -46,7 +46,7 @@
                 <ul class="slides">
                   <el-carousel height="341px">
                     <el-carousel-item v-for="item in sliderlist" :key="item.id">
-                     <img :src="item.img_url" alt="" class="img-slider">
+                      <img :src="item.img_url" alt class="img-slider">
                     </el-carousel-item>
                   </el-carousel>
                   <a href="/goods.html">
@@ -214,14 +214,18 @@
           </ul>
         </div>
       </div>
-    </div> -->
+    </div>-->
     <!-- 底部数据 -->
     <div class="section" v-for="(item, index) in sectionList" :key="index">
       <div class="main-tit">
         <h2>>{{item.catetitle}}</h2>
         <p>
-          <a v-for="(it, i) in item.level2catelist" :key="i" href="/goods/43.html">{{it.subcatetitle}}</a>
-        
+          <a
+            v-for="(it, i) in item.level2catelist"
+            :key="i"
+            href="/goods/43.html"
+          >{{it.subcatetitle}}</a>
+
           <a href="/goods/40.html">
             更多
             <i>+</i>
@@ -232,11 +236,10 @@
         <div class="wrap-box">
           <ul class="img-list">
             <li v-for="(it, i) in item.datas" :key="i">
-              <a href="#/site/goodsinfo/92" class>
+              <!-- <a href="#/site/goodsinfo/92" class> -->
+              <router-link :to="'/detail/'+it.artID">
                 <div class="img-box">
-                  <img
-                    :src="it.img_url"
-                  >
+                  <img :src="it.img_url">
                 </div>
                 <div class="info">
                   <h3>{{it.artTitle}}</h3>
@@ -251,9 +254,9 @@
                     </span>
                   </p>
                 </div>
-              </a>
+              <!-- </a> -->
+              </router-link>
             </li>
-         
           </ul>
         </div>
       </div>
@@ -469,7 +472,7 @@ export default {
         this.sliderlist = res.data.message.sliderlist;
         this.toplist = res.data.message.toplist;
       });
-        // 底部数据
+    // 底部数据
     axios
       .get("http://111.230.232.110:8899/site/goods/getgoodsgroup")
       .then(res => {
@@ -486,7 +489,8 @@ export default {
 </script>
 
 <style>
-.img-slider{
-    width: 100%;height: 100%;
+.img-slider {
+  width: 100%;
+  height: 100%;
 }
 </style>

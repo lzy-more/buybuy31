@@ -16,7 +16,10 @@ import userOrder from './components/userOrder.vue'
 import axios from 'axios'
 axios.defaults.baseURL = 'http://111.230.232.110:8899';
 
-
+import moment from 'moment'
+Vue.filter('formatTime', function  (value){
+return moment(value).format('YYYY年MM月DD日')
+})
 Vue.prototype.$axios=axios
 Vue.use(ElementUI);
 const routes = [

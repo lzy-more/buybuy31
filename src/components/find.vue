@@ -480,11 +480,11 @@ export default {
         this.sectionList = res.data.message;
       });
   },
-  filters: {
-    formatTime(value) {
-      return value.split("T")[0];
-    }
-  }
+  // filters: {
+  //   formatTime(value) {
+  //     return value.split("T")[0];
+  //   }
+  // }
 };
 </script>
 

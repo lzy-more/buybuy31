@@ -14,13 +14,11 @@
           <div class="left-925">
             <div class="goods-box clearfix">
               <div class="pic-box">
-
- <el-carousel height="330px">
-      <el-carousel-item v-for="item in imglist" :key="item.id">
-      <img :src="item.thumb_path" alt="" class="slider-img">
-      </el-carousel-item>
-    </el-carousel>
-
+                <el-carousel height="330px">
+                  <el-carousel-item v-for="item in imglist" :key="item.id">
+                    <img :src="item.thumb_path" alt class="slider-img">
+                  </el-carousel-item>
+                </el-carousel>
               </div>
               <div class="goods-spec">
                 <h1>{{goodsinfo.title}}</h1>
@@ -48,7 +46,12 @@
                     <dt>购买数量</dt>
                     <dd>
                       <div class="stock-box">
-                     <el-input-number v-model="num"  :min="1"  :max="goodsinfo.stock_quantity" label="描述文字"></el-input-number>
+                        <el-input-number
+                          v-model="num"
+                          :min="1"
+                          :max="goodsinfo.stock_quantity"
+                          label="描述文字"
+                        ></el-input-number>
                       </div>
                       <span class="stock-txt">
                         库存
@@ -104,7 +107,7 @@
                           sucmsg=" "
                           data-type="*10-1000"
                           nullmsg="请填写评论内容！"
-                          @keyup.13='postcomment'
+                          @keyup.13="postcomment"
                         ></textarea>
                         <span class="Validform_checktip"></span>
                       </div>
@@ -115,14 +118,14 @@
                           type="submit"
                           value="提交评论"
                           class="submit"
-                          @click='postcomment'
+                          @click="postcomment"
                         >
                         <span class="Validform_checktip"></span>
                       </div>
                     </div>
                   </div>
                   <ul id="commentList" class="list-box">
-                    <p
+                    <p v-show="length"
                       style="margin: 5px 0px 15px 69px; line-height: 42px; text-align: center; border: 1px solid rgb(247, 247, 247);"
                     >暂无评论，快来抢沙发吧！</p>
                     <li v-for="(item, index) in commentList" :key="index">
@@ -137,18 +140,17 @@
                         <p>{{item.content}}</p>
                       </div>
                     </li>
-                 
                   </ul>
                   <div class="page-box" style="margin: 5px 0px 0px 62px;">
-                     <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="pageIndex"
-      :page-sizes="[5, 10, 15, 20]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="totalcount">
-    </el-pagination>
+                    <el-pagination
+                      @size-change="handleSizeChange"
+                      @current-change="handleCurrentChange"
+                      :current-page="pageIndex"
+                      :page-sizes="[5, 10, 15, 20]"
+                      :page-size="pageSize"
+                      layout="total, sizes, prev, pager, next, jumper"
+                      :total="totalcount"
+                    ></el-pagination>
                   </div>
                 </div>
               </div>
@@ -161,12 +163,12 @@
                 <ul class="side-img-list">
                   <li v-for="(item, index) in hotgoodslist" :key="index">
                     <div class="img-box">
-                      <a href="#/site/goodsinfo/90" class>
+                      <router-link :to="'/detail/'+item.id">
                         <img :src="item.img_url">
-                      </a>
+                      </router-link>
                     </div>
                     <div class="txt-box">
-                      <a href="#/site/goodsinfo/90" class>{{item.title}}</a>
+                      <router-link :to="'/detail/'+item.id">{{item.title}}</router-link>
                       <span>{{item.add_time | formatTime}}</span>
                     </div>
                   </li>
@@ -197,16 +199,17 @@ export default {
       comment: "",
       // tab的索引
       index: 1,
-      pageIndex :1,
-      pageSize:10,
-      commentList:[],
-      totalcount:0,
-      num:1
+      pageIndex: 1,
+      pageSize: 10,
+      commentList: [],
+      totalcount: 0,
+      num: 1,
+      length:false
     };
   },
   created() {
     console.log(this.$route.params.id);
-    this.getcomment()
+    this.getcomment();
     axios
       .get(
         `http://111.230.232.110:8899/site/goods/getgoodsinfo/${
@@ -219,47 +222,71 @@ export default {
         this.goodsinfo = res.data.message.goodsinfo;
         this.hotgoodslist = res.data.message.hotgoodslist;
         this.imglist = res.data.message.imglist;
+      
       });
+  },
+  watch: {
+    //重新获取商品详情
+    "$route.params.id"(nw, ov) {
+            //  this.getcomment();
 
+      axios
+        .get(`http://111.230.232.110:8899/site/goods/getgoodsinfo/${nw}`)
+        .then(res => {
+          // console.log(res);
 
+          this.goodsinfo = res.data.message.goodsinfo;
+          this.hotgoodslist = res.data.message.hotgoodslist;
+          this.imglist = res.data.message.imglist;
+        });
+          this.getcomment();
+    },
+  
   },
   methods: {
-      postcomment(){
-          if(this.comment==''){
-                this.$message.error('写点东西再走啊,萨比');
-          }else{
-             axios.post(`/site/validate/comment/post/goods/${
-          this.$route.params.id
-        }`,{
-  "commenttxt":this.comment
-}).then(res=>{
-            if(res.data.status==0){
-                 this.$message.success('评论成功');
-            }
-            this.pageIndex=1;
-            this.getcomment()
-            
-        }),
-        this.comment='';
-          }
-      },
-      //获取评论信息
-      getcomment(){
-          axios.get(`/site/comment/getbypage/goods/${this.$route.params.id}?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`)
-          .then(res=>{
-// console.log(res);
-this.totalcount=res.data.totalcount
-this.commentList=res.data.message
+    postcomment() {
+      if (this.comment == "") {
+        this.$message.error("写点东西再走啊,萨比");
+      } else {
+        axios
+          .post(`/site/validate/comment/post/goods/${this.$route.params.id}`, {
+            commenttxt: this.comment
           })
-      },
-      handleSizeChange(size){
-          this.pageSize=size;
-          this.getcomment()
-      },
-      handleCurrentChange(current){
-          this.pageIndex=current;
-          this.getcomment()
+          .then(res => {
+            if (res.data.status == 0) {
+              this.$message.success("评论成功");
+            }
+            this.pageIndex = 1;
+            this.getcomment();
+          }),
+          (this.comment = "");
       }
+    },
+    //获取评论信息
+    getcomment() {
+      axios
+        .get(
+          `/site/comment/getbypage/goods/${this.$route.params.id}?pageIndex=${
+            this.pageIndex
+          }&pageSize=${this.pageSize}`
+        )
+        .then(res => {
+          // console.log(res);
+          this.totalcount = res.data.totalcount;
+          this.commentList = res.data.message;
+          if( this.commentList==''){
+            this.length=true;
+          }
+        });
+    },
+    handleSizeChange(size) {
+      this.pageSize = size;
+      this.getcomment();
+    },
+    handleCurrentChange(current) {
+      this.pageIndex = current;
+      this.getcomment();
+    }
   },
   filters: {
     formatTime(value) {

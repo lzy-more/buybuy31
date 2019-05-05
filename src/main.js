@@ -13,8 +13,18 @@ import userContainer from './components/userContainer.vue'
 import userDetail from './components/userDetail.vue'
 import userIndex from './components/userIndex.vue'
 import userOrder from './components/userOrder.vue'
+import axios from 'axios'
+axios.defaults.baseURL = 'http://111.230.232.110:8899';
+
+
+Vue.prototype.$axios=axios
 Vue.use(ElementUI);
-const routes = [{
+const routes = [
+  {
+    path: '/',
+    redirect: '/index'
+  },
+  {
     path: '/index',
     component: index
   },

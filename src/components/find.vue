@@ -451,7 +451,7 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 export default {
   name: "index",
   data() {
@@ -464,8 +464,8 @@ export default {
     };
   },
   created() {
-    axios
-      .get("http://111.230.232.110:8899/site/goods/gettopdata/goods")
+    this.$axios
+      .get("/site/goods/gettopdata/goods")
       .then(res => {
         // console.log(res);
         this.catelist = res.data.message.catelist;
@@ -473,8 +473,8 @@ export default {
         this.toplist = res.data.message.toplist;
       });
     // 底部数据
-    axios
-      .get("http://111.230.232.110:8899/site/goods/getgoodsgroup")
+    this.$axios
+      .get("/site/goods/getgoodsgroup")
       .then(res => {
         console.log(res);
         this.sectionList = res.data.message;

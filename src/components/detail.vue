@@ -13,7 +13,15 @@
         <div class="wrap-box">
           <div class="left-925">
             <div class="goods-box clearfix">
-              <div class="pic-box"></div>
+              <div class="pic-box">
+
+ <el-carousel height="330px">
+      <el-carousel-item v-for="item in imglist" :key="item.id">
+      <img :src="item.thumb_path" alt="" class="slider-img">
+      </el-carousel-item>
+    </el-carousel>
+
+              </div>
               <div class="goods-spec">
                 <h1>{{goodsinfo.title}}</h1>
                 <p class="subtitle">{{goodsinfo.sub_title}}</p>
@@ -40,35 +48,7 @@
                     <dt>购买数量</dt>
                     <dd>
                       <div class="stock-box">
-                        <div class="el-input-number el-input-number--small">
-                          <span role="button" class="el-input-number__decrease is-disabled">
-                            <i class="el-icon-minus"></i>
-                          </span>
-                          <span role="button" class="el-input-number__increase">
-                            <i class="el-icon-plus"></i>
-                          </span>
-                          <div class="el-input el-input--small">
-                            <!---->
-                            <input
-                              autocomplete="off"
-                              size="small"
-                              type="text"
-                              rows="2"
-                              max="60"
-                              min="1"
-                              validateevent="true"
-                              class="el-input__inner"
-                              role="spinbutton"
-                              aria-valuemax="60"
-                              aria-valuemin="1"
-                              aria-valuenow="1"
-                              aria-disabled="false"
-                            >
-                            <!---->
-                            <!---->
-                            <!---->
-                          </div>
-                        </div>
+                     <el-input-number v-model="num"  :min="1"  :max="goodsinfo.stock_quantity" label="描述文字"></el-input-number>
                       </div>
                       <span class="stock-txt">
                         库存
@@ -220,7 +200,8 @@ export default {
       pageIndex :1,
       pageSize:10,
       commentList:[],
-      totalcount:0
+      totalcount:0,
+      num:1
     };
   },
   created() {
@@ -247,7 +228,7 @@ export default {
           if(this.comment==''){
                 this.$message.error('写点东西再走啊,萨比');
           }else{
-             axios.post(`http://111.230.232.110:8899/site/validate/comment/post/goods/${
+             axios.post(`/site/validate/comment/post/goods/${
           this.$route.params.id
         }`,{
   "commenttxt":this.comment
@@ -264,7 +245,7 @@ export default {
       },
       //获取评论信息
       getcomment(){
-          axios.get(`http://111.230.232.110:8899/site/comment/getbypage/goods/${this.$route.params.id}?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`)
+          axios.get(`/site/comment/getbypage/goods/${this.$route.params.id}?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`)
           .then(res=>{
 // console.log(res);
 this.totalcount=res.data.totalcount
@@ -292,5 +273,11 @@ this.commentList=res.data.message
 .tab-content img {
   display: block;
   width: 100%;
+}
+.pic-box {
+  width: 395px;
+}
+.pic-box .slider-img {
+  height: 100%;
 }
 </style>
